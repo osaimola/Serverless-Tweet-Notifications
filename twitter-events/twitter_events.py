@@ -46,7 +46,7 @@ def crc(event, context):
             sender_id = body['direct_message_events'][0]['message_create']['sender_id']
             if sender_id != os.environ['MY_TWITTER_ID']:
 
-                # importing requests takes a while (>3 seconds may cause timeout fail or increased costs in production)
+                # importing requests takes a while (>3 seconds may cause timeout fail or increased AWS costs)
                 # requests a better alternative to twilio.rest.Client. smaller package size for Lambda
                 import requests
                 dm = "@" + body['users'][sender_id]['screen_name'] + ": "
