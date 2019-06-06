@@ -10,8 +10,8 @@ from twilio.request_validator import RequestValidator
 
 def lambda_handler(event, context):
     print("received: " + str(event))
-    # if twilioSignature exists, create a validator & a dictionary of received data
-    if u'twilioSignature' in event and u'Body' in event:
+    # if twilioSignature exists and message from authorized number, create a validator & a dictionary of received data
+    if u'twilioSignature' in event and u'Body' in event and event['From'] == os.environ['MY_NUMBER']:
         form_parameters = {
             key: urllib.parse.unquote_plus(value) for key, value in event.items()
             if key != u'twilioSignature'
@@ -31,7 +31,8 @@ def lambda_handler(event, context):
             auth = tweepy.OAuthHandler(os.environ['API_KEY'], os.environ['API_SECRET'])
             auth.set_access_token(os.environ['ACCESS_TOKEN'], os.environ['ACCESS_SECRET'])
             api = tweepy.API(auth)
-            api.update_status(event['Body'])
+            msg = form_parameters['Body']
+            api.update_status(msg)
 
             return '<?xml version=\"1.0\" encoding=\"UTF-8\"?>' \
                    '<Response><Message>Request Received, OK!</Message></Response>'
